@@ -16,8 +16,8 @@ bucket_name = os.getenv("GRIDFS_BUCKET")
 
 # Connect to MongoDB dynamically
 client = MongoClient(mongo_uri)
-db = client["db_name"]
-fs = gridfs.GridFS(db, collection="bucket_name")
+db = client[db_name]
+fs = gridfs.GridFS(db, collection=bucket_name)
 
 
 app = FastAPI()
