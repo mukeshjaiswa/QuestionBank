@@ -11,52 +11,15 @@ export default function Left() {
                 <h1 className='text-xl font-semibold text-slate-600'>BCANEPALHUB</h1>
 
             </div>
-            {/* <div className='flex font-semibold items-center gap-3 justify-center mt-5 cursor-pointer '>
-                <Plus className=''/>
-                <h1> Add Question</h1>
-
-            </div> */}
+           {semesterdat.map((data)=>(
             <div className='w-[250px] justify-between flex font-semibold items-center gap-3 mt-5 cursor-pointer'>
                 <Folder className=''/>
-                <h1>First semester Question </h1>
+                <h1>{data} semester Question </h1>
 
             </div>
-            <div className=' w-[250px] justify-between flex font-semibold items-center gap-3  mt-5 cursor-pointer'>
-                <Folder className=''/>
-                <h1>Second semester Question </h1>
-
-            </div>
-            <div className='flex font-semibold items-center gap-3 w-[250px] justify-between mt-5 cursor-pointer'>
-                <Folder className=''/>
-                <h1>Third semester Question </h1>
-
-            </div>
-            <div className='flex font-semibold items-center gap-3 w-[250px] justify-between mt-5 cursor-pointer'>
-                <Folder className=''/>
-                <h1>Fourth semester Question </h1>
-
-            </div>
-            <div className='flex font-semibold items-center gap-3 w-[250px] justify-between mt-5 cursor-pointer'>
-                <Folder className=''/>
-                <h1>Fifth semester Question </h1>
-
-            </div>
-            <div className='flex font-semibold items-center gap-3 w-[250px] justify-between mt-5 cursor-pointer'>
-                <Folder className=''/>
-                <h1>Sixth semester Question </h1>
-
-            </div>
-            <div className='flex font-semibold items-center gap-3 w-[250px] justify-between mt-5 cursor-pointer'>
-                <Folder className=''/>
-                <h1>seventh semester Question </h1>
-
-            </div>
-            <div className='flex font-semibold items-center gap-3 w-[250px] justify-between mt-5 cursor-pointer'>
-                <Folder className=''/>
-                <h1>Eight semester Question </h1>
-
-            </div>
-        
+           ))}
         </div>
     )
 }
+
+export const semesterdat=['First','Second','Third','Fourth','Fifth','Sixth','Seventh','Eight']

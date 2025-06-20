@@ -5,12 +5,14 @@ import { addDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useEffect } from 'react';
+import { semestersubject } from '../Home/Homepostdata';
 
 export default function Right() {
     const [semester, setSemester] = useState('');
     const [subject, setSubject] = useState('');
     const [file, setFile] = useState(null);
     const [getpdf, setGetpdf] = useState([])
+    const [getsemester, setGetsemester] = useState([])
 
     const handleradd = async () => {
         if (!semester || !subject || !file) {
@@ -49,19 +51,12 @@ export default function Right() {
 
     }
     useEffect(() => {
-        const fetchdata = async () => {
-            const getdata = collection(db, 'question');
-            const snapshot = await getDocs(getdata);
-            const dataList = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-            setGetpdf(dataList)
-            console.log(dataList)
-        }
-        fetchdata();
-    }, []);
+        const matchsemester = semestersubject.filter((items) => items.semester === semester)
+        setGetsemester(matchsemester)
+        // console.log(matchsemester)
+    }, [semester])
 
+    console.log(getsemester)
     return (
         <div className='w-[900px]  ml-[350px]  p-5 '>
             <h1 className='w-full text-center text-xl font-semibold'>Add Question</h1>
@@ -81,11 +76,25 @@ export default function Right() {
                         <option value='eight' >Eight </option>
                     </select>
                 </div>
-                <div className='w-full px-10 space-y-2 '>
-                    <h1 className='text-lg font-semibold'>Subject</h1>
-                    <input value={subject} type='text' placeholder='Add Subject name' className='w-full py-1 px-3 outline-none text-lg border rounded-md ' onChange={(e) => setSubject(e.target.value)}>
 
-                    </input>
+                <div className='w-full px-10 space-y-2 '>
+                    <h1 className='text-lg font-semibold'> Select Subject</h1>
+                    <select value={subject} type='text' placeholder='Add Subject name' className='w-full py-1 px-3 outline-none text-lg border rounded-md ' onChange={(e) => setSubject(e.target.value)}>
+                    <option value='' disabled selected>Select Subject</option>
+                    {getsemester.map((data)=>(
+                    <div className='flex flex-col gap-3'>
+                    {data.subject.map((subject ) => (
+  
+                      <option value={subject}  >{subject} </option>
+                    ))}
+  
+  
+  
+                  </div>
+
+                    ))}
+
+                    </select>
                 </div>
                 <div className='w-full px-10 space-y-2 '>
                     <h1 className='text-lg font-semibold'>Upload Question File</h1>
@@ -98,7 +107,7 @@ export default function Right() {
             <div className='flex items-end justify-end px-10 py-3' onClick={handleradd}>
                 <button className='bg-slate-800 hover:bg-slate-600 font-semibold text-white py-2 rounded-md px-5'>Add </button>
             </div>
-          
+
 
 
         </div>

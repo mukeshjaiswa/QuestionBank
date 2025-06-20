@@ -75,7 +75,7 @@ export const semestersubject=[
     },
     {
         semester:'fourth',
-        subject:['Operating System','Numerical Methods','Software Engineering','Scripting Language','Database Management System','Project II']
+        subject:['Operating System','Numerical Methods','Software Engineering','Scripting Language','Database Management System','Project I']
     },
     {
         semester:'fifth',
