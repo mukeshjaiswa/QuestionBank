@@ -1,3 +1,137 @@
+from fastapi import FastAPI, File, UploadFile, Form, HTTPException
+from fastapi.responses import JSONResponse
+from logic import process_file_upload, retrieve_file_metadata_by_subject_semester
+import database  # This triggers the DB connection
+
+app = FastAPI(
+    title="File Uploader Service",
+    description="A simple FastAPI service for uploading and managing files using MongoDB GridFS.",
+    version="1.0.1"
+)
+
+@app.post("/upload/", summary="Upload a file to GridFS")
+async def upload_file_endpoint(
+    file: UploadFile = File(...),
+    subject: str = Form(...),
+    semester: str = Form(...)
+):
+    """
+    Uploads a file to GridFS with subject and semester metadata.
+    """
+    file_id = await process_file_upload(file, subject, semester)
+    return JSONResponse(
+        content={"message": "File uploaded successfully", "file_id": file_id},
+        status_code=201
+    )
+
+
+@app.get("/files", summary="Get files by subject and semester")
+def get_files_by_subject_semester(subject: str, semester: str):
+    """
+    Retrieve metadata for files matching subject and semester.
+    """
+    files = retrieve_file_metadata_by_subject_semester(subject, semester)
+    return JSONResponse(content={"files": files}, status_code=200)
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # from fastapi import FastAPI, File, UploadFile, HTTPException
 # from fastapi.responses import JSONResponse
 # from pymongo import MongoClient
@@ -83,36 +217,36 @@
 
 
 
-# main.py
-from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.responses import JSONResponse
-from logic import process_file_upload, retrieve_file_metadata
-import database # This line ensures the database connection is initialized when main.py runs
+# # main.py
+# from fastapi import FastAPI, File, UploadFile, HTTPException
+# from fastapi.responses import JSONResponse
+# from logic import process_file_upload, retrieve_file_metadata
+# import database # This line ensures the database connection is initialized when main.py runs
 
-app = FastAPI(
-    title="File Uploader Service",
-    description="A simple FastAPI service for uploading and managing files using MongoDB GridFS.",
-    version="1.0.0"
-)
+# app = FastAPI(
+#     title="File Uploader Service",
+#     description="A simple FastAPI service for uploading and managing files using MongoDB GridFS.",
+#     version="1.0.0"
+# )
 
-@app.post("/upload/", summary="Upload a file to GridFS")
-async def upload_file_endpoint(file: UploadFile = File(...)):
-    """
-    Uploads a file to the MongoDB GridFS and returns the generated file ID.
-    """
-    file_id = await process_file_upload(file)
-    return JSONResponse(
-        content={"message": "File uploaded successfully", "file_id": file_id},
-        status_code=201
-    )
+# @app.post("/upload/", summary="Upload a file to GridFS")
+# async def upload_file_endpoint(file: UploadFile = File(...)):
+#     """
+#     Uploads a file to the MongoDB GridFS and returns the generated file ID.
+#     """
+#     file_id = await process_file_upload(file)
+#     return JSONResponse(
+#         content={"message": "File uploaded successfully", "file_id": file_id},
+#         status_code=201
+#     )
 
-@app.get("/files/{file_id}", summary="Get file metadata by ID")
-def get_file_metadata_endpoint(file_id: str):
-    """
-    Retrieves metadata (filename, content type, size) for a specific file by its ID.
-    """
-    metadata = retrieve_file_metadata(file_id)
-    return JSONResponse(content=metadata, status_code=200)
+# @app.get("/files/{file_id}", summary="Get file metadata by ID")
+# def get_file_metadata_endpoint(file_id: str):
+#     """
+#     Retrieves metadata (filename, content type, size) for a specific file by its ID.
+#     """
+#     metadata = retrieve_file_metadata(file_id)
+#     return JSONResponse(content=metadata, status_code=200)
 
 
 

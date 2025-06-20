@@ -1,4 +1,3 @@
-# database.py
 import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -7,52 +6,208 @@ from bson.objectid import ObjectId
 from bson.errors import InvalidId
 from fastapi import HTTPException
 
-load_dotenv()  # Load variables from .env
+load_dotenv()
 
-# --- Configuration ---
-MONGO_URI = os.getenv("MONGODB_URI")
-DB_NAME = os.getenv("DB_NAME")
-BUCKET_NAME = os.getenv("GRIDFS_BUCKET")
+# Env config
+MONGO_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
+DB_NAME = os.getenv("DB_NAME", "fileuploader")
+BUCKET_NAME = os.getenv("GRIDFS_BUCKET", "file_db")
 
-# --- Database Connection ---
+# DB connection
 try:
     client = MongoClient(MONGO_URI)
     db = client[DB_NAME]
     fs = gridfs.GridFS(db, collection=BUCKET_NAME)
-    print("Successfully connected to MongoDB!")
+    print(f"✅ Connected to MongoDB database: {DB_NAME}, bucket: {BUCKET_NAME}")
 except Exception as e:
-    print(f"Error connecting to MongoDB: {e}")
-    # Depending on your deployment, you might want to raise an exception here
-    # or handle it gracefully if the app can start without a DB connection immediately.
-    raise RuntimeError(f"Could not connect to MongoDB: {e}")
+    raise RuntimeError(f"❌ Could not connect to MongoDB: {e}")
 
+# GridFS Operations
 
-# --- GridFS Operations ---
-async def save_file_to_gridfs(contents: bytes, filename: str, content_type: str) -> ObjectId:
-    """Saves file contents to GridFS."""
+async def save_file_to_gridfs(contents: bytes, filename: str, content_type: str, subject: str, semester: str):
+    """Save file with subject and semester metadata."""
     try:
         file_id = fs.put(
             contents,
             filename=filename,
             content_type=content_type,
-            chunk_size=1048576  # Using 1MB chunk size (1024 * 1024)
+            subject=subject,
+            semester=semester,
+            chunk_size=1024 * 1024
         )
         return file_id
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to save file to GridFS: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to save file: {e}")
 
-def get_file_metadata_from_gridfs(file_id: str):
-    """Retrieves file metadata from GridFS by ID."""
+
+def get_files_by_subject_semester(subject: str, semester: str):
+    """Find all files with subject and semester metadata."""
     try:
-        obj_id = ObjectId(file_id)
-    except InvalidId:
-        raise HTTPException(status_code=400, detail="Invalid file ID format.")
+        results = []
+        for file in fs.find({"subject": subject, "semester": semester}):
+            results.append({
+                "file_id": str(file._id),
+                "filename": file.filename,
+                "content_type": file.content_type,
+                "subject": file.subject,
+                "semester": file.semester,
+                "length": file.length,
+                "upload_date": file.upload_date.isoformat()
+            })
+        if not results:
+            raise HTTPException(status_code=404, detail="No files found.")
+        return results
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching files: {e}")
 
-    file = fs.find_one({"_id": obj_id})
-    if not file:
-        raise HTTPException(status_code=404, detail="File not found.")
-    return {
-        "filename": file.filename,
-        "content_type": file.content_type,
-        "length": file.length
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # database.py
+# import os
+# from dotenv import load_dotenv
+# from pymongo import MongoClient
+# import gridfs
+# from bson.objectid import ObjectId
+# from bson.errors import InvalidId
+# from fastapi import HTTPException
+
+# load_dotenv()  # Load variables from .env
+
+# # --- Configuration ---
+# MONGO_URI = os.getenv("MONGODB_URI")
+# DB_NAME = os.getenv("DB_NAME")
+# BUCKET_NAME = os.getenv("GRIDFS_BUCKET")
+
+# # --- Database Connection ---
+# try:
+#     client = MongoClient(MONGO_URI)
+#     db = client[DB_NAME]
+#     fs = gridfs.GridFS(db, collection=BUCKET_NAME)
+#     print("Successfully connected to MongoDB!")
+# except Exception as e:
+#     print(f"Error connecting to MongoDB: {e}")
+#     # Depending on your deployment, you might want to raise an exception here
+#     # or handle it gracefully if the app can start without a DB connection immediately.
+#     raise RuntimeError(f"Could not connect to MongoDB: {e}")
+
+
+# # --- GridFS Operations ---
+# async def save_file_to_gridfs(contents: bytes, filename: str, content_type: str) -> ObjectId:
+#     """Saves file contents to GridFS."""
+#     try:
+#         file_id = fs.put(
+#             contents,
+#             filename=filename,
+#             content_type=content_type,
+#             chunk_size=1048576  # Using 1MB chunk size (1024 * 1024)
+#         )
+#         return file_id
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=f"Failed to save file to GridFS: {e}")
+
+# def get_file_metadata_from_gridfs(file_id: str):
+#     """Retrieves file metadata from GridFS by ID."""
+#     try:
+#         obj_id = ObjectId(file_id)
+#     except InvalidId:
+#         raise HTTPException(status_code=400, detail="Invalid file ID format.")
+
+#     file = fs.find_one({"_id": obj_id})
+#     if not file:
+#         raise HTTPException(status_code=404, detail="File not found.")
+#     return {
+#         "filename": file.filename,
+#         "content_type": file.content_type,
+#         "length": file.length
+#     }
