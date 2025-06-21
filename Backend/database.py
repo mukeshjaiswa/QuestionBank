@@ -2,9 +2,10 @@ import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
 import gridfs
-from bson.objectid import ObjectId
-from bson.errors import InvalidId
+# from bson.objectid import ObjectId
+# from bson.errors import InvalidId
 from fastapi import HTTPException
+from typing import Optional
 
 load_dotenv()
 
@@ -24,7 +25,11 @@ except Exception as e:
 
 # GridFS Operations
 
-async def save_file_to_gridfs(contents: bytes, filename: str, content_type: str, subject: str, semester: str):
+async def save_file_to_gridfs(contents: bytes, 
+                              filename: Optional[str], 
+                              content_type: Optional[str], 
+                              subject: str, 
+                              semester: str):
     """Save file with subject and semester metadata."""
     try:
         file_id = fs.put(
@@ -33,7 +38,7 @@ async def save_file_to_gridfs(contents: bytes, filename: str, content_type: str,
             content_type=content_type,
             subject=subject,
             semester=semester,
-            chunk_size=1024 * 1024
+            chunk_size=1000024 * 1024
         )
         return file_id
     except Exception as e:

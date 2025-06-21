@@ -1,13 +1,27 @@
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException
 from fastapi.responses import JSONResponse
 from logic import process_file_upload, retrieve_file_metadata_by_subject_semester
-import database  # This triggers the DB connection
+# import database  # This triggers the DB connection
+# from bson import SON
+# from fastapi.staticfiles import StaticFiles
+# from fastapi.responses import HTMLResponse
+# import os
+# from pathlib import Path
 
 app = FastAPI(
     title="File Uploader Service",
     description="A simple FastAPI service for uploading and managing files using MongoDB GridFS.",
     version="1.0.1"
 )
+
+# @app.get("/", response_class=HTMLResponse)
+# async def serve_homepage():
+#     html_path = Path(__file__).resolve().parent.parent / "public" / "index.html"
+#     return html_path.read_text(encoding="utf-8")
+
+
+
+
 
 @app.post("/upload/", summary="Upload a file to GridFS")
 async def upload_file_endpoint(
@@ -20,8 +34,9 @@ async def upload_file_endpoint(
     """
     file_id = await process_file_upload(file, subject, semester)
     return JSONResponse(
-        content={"message": "File uploaded successfully", "file_id": file_id},
+        content={"message": "File uploaded successfully", "file_id": file_id,"subject":subject,"semester":semester},
         status_code=201
+        
     )
 
 
@@ -32,6 +47,10 @@ def get_files_by_subject_semester(subject: str, semester: str):
     """
     files = retrieve_file_metadata_by_subject_semester(subject, semester)
     return JSONResponse(content={"files": files}, status_code=200)
+
+
+
+
 
 
 if __name__ == "__main__":

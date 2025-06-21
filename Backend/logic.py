@@ -12,6 +12,9 @@ async def process_file_upload(file: UploadFile, subject: str, semester: str) -> 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error during file upload: {e}")
 
+
+
+
 def retrieve_file_metadata_by_subject_semester(subject: str, semester: str):
     """
     Gets metadata for files by subject and semester.
