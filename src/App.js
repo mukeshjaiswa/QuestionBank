@@ -14,6 +14,7 @@ import Question from './component/QuestionPage/Question';
 import SubjectquestionView from './component/SubjectquestionView/SubjectquestionView';
 import Syllabus from './component/Syllabus/Syllabus';
 import { ToastContainer } from 'react-toastify';
+import Manage from './component/Dashboard/Manage';
 
 
 
@@ -34,6 +35,7 @@ function App() {
       <Route path='/mcqview/:name' element={<MCQView/>} />
       <Route path='/admin' element={<Login/>} />
       <Route path='/dashboard' element={<Dashboard/>} />
+      <Route path='/manage/:id' element={<Manage/>} />
     </Routes>
     <ToastContainer position='top-center' autoClose='2000'/>
     

@@ -1,55 +1,123 @@
 import React from 'react'
 import { toast } from 'react-toastify';
 import { useState } from 'react'
-import { addDoc, collection, getDocs } from 'firebase/firestore';
-import { db } from '../config/firebase';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
 import { useEffect } from 'react';
 import { semestersubject } from '../Home/Homepostdata';
+
+
 
 export default function Right() {
     const [semester, setSemester] = useState('');
     const [subject, setSubject] = useState('');
     const [file, setFile] = useState(null);
-    const [getpdf, setGetpdf] = useState([])
+
     const [getsemester, setGetsemester] = useState([])
+
+    const API_URL = 'http://127.0.0.1:8000'
+
+    // const uploadedquestion = async (questiondata) => {
+    //     console.log("user  data:", 'This is loger');
+    //     try {
+    //         const res = await fetch(`${API_URL}/upload/`, {
+    //             method: "POST",
+    //             headers: { "Content-Type": "application/json" },
+    //             body: JSON.stringify(questiondata),
+    //         });
+
+    //         if (res.ok) {
+    //             toast.success("User created successfully!", "green");
+    //             //   fetchUsers();
+    //         } else {
+    //             const err = await res.json();
+    //             toast.warn("Create failed: " + err.detail, "red");
+    //         }
+    //     } catch (error) {
+    //         console.error(error);
+    //         toast.error("Error creating user", "red");
+    //     }
+
+
+    // }
+
+    // const handleradd = async () => {
+    //     if (!semester || !subject || !file) {
+    //         toast.warn("Please enter all fields");
+    //         return;
+    //     }
+
+    //     else {
+    //         const questiondata = {
+    //             subject: subject,
+    //             semester: semester,
+    //             question: file,
+    //         }
+    //         uploadedquestion(questiondata)
+
+    //     }
+
+    // };
+
+    // const handleradd = async () => {
+    //     if (!semester || !subject || !file) {
+    //         toast.warn("Please enter all fields");
+    //         return;
+    //     }
+
+    //     const formData = new FormData();
+    //     formData.append("semester", semester);
+    //     formData.append("subject", subject);
+    //     formData.append("file", file);
+
+    //     try {
+    //         const response = await fetch("http://127.0.0.1:8000/upload/", {
+    //             method: "POST",
+    //             body: formData,
+    //         });
+
+    //         if (!response.ok) {
+    //             throw new Error("Upload failed");
+    //         }
+
+    //         const result = await response.json();
+    //         toast.success(`Question added: ${result.filename}`);
+    //     } catch (error) {
+    //         console.error("Upload error", error);
+    //         toast.error("Failed to upload");
+    //     }
+    // };
 
     const handleradd = async () => {
         if (!semester || !subject || !file) {
-            toast.warn("Please enter all fields")
+            toast.warn("Please enter all fields");
+            return;
         }
-        else {
 
-            try {
-                const storage = getStorage();
-                const fileRef = ref(storage, `questions/${Date.now()}_${file.name}`);
+        const formData = new FormData();
+        formData.append("file", file);  // Important: the key must match what FastAPI expects
+        formData.append("subject", subject);
+        formData.append("semester", semester);
 
-                await uploadBytes(fileRef, file);
-                const downloadURL = await getDownloadURL(fileRef);
+        try {
+            const response = await fetch(`${API_URL}/upload/`, {
+                method: "POST",
+                body: formData,
+            });
 
-                const data = {
-                    semester,
-                    subject,
-                    question: downloadURL,
-                    filename: file.name,
-                    createdAt: new Date()
-                };
-                await addDoc(collection(db, 'question'), data);
-
-                toast.success("Add sucessfully")
-                setFile(null)
-                setSemester('')
-                setSubject('')
-            } catch (error) {
-                toast.error("Not added: " + error.message)
-
-
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.detail || "Upload failed");
             }
 
-
+            const result = await response.json();
+            toast.success(`Question uploaded`);
+        } catch (error) {
+            console.error("Upload error:", error);
+            toast.error("Failed to upload question");
         }
+    };
 
-    }
+
     useEffect(() => {
         const matchsemester = semestersubject.filter((items) => items.semester === semester)
         setGetsemester(matchsemester)
@@ -80,19 +148,19 @@ export default function Right() {
                 <div className='w-full px-10 space-y-2 '>
                     <h1 className='text-lg font-semibold'> Select Subject</h1>
                     <select value={subject} type='text' placeholder='Add Subject name' className='w-full py-1 px-3 outline-none text-lg border rounded-md ' onChange={(e) => setSubject(e.target.value)}>
-                    <option value='' disabled selected>Select Subject</option>
-                    {getsemester.map((data)=>(
-                    <div className='flex flex-col gap-3'>
-                    {data.subject.map((subject ) => (
-  
-                      <option value={subject}  >{subject} </option>
-                    ))}
-  
-  
-  
-                  </div>
+                        <option value='' disabled selected>Select Subject</option>
+                        {getsemester.map((data, index) => (
+                            <div key={index} className='flex flex-col gap-3'>
+                                {data.subject.map((subject, index) => (
 
-                    ))}
+                                    <option key={index} value={subject}  >{subject} </option>
+                                ))}
+
+
+
+                            </div>
+
+                        ))}
 
                     </select>
                 </div>

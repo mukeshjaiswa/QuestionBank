@@ -1,5 +1,6 @@
 import { Folder, Plus } from 'lucide-react'
 import React from 'react'
+import { Link } from 'react-router'
 import logo from '../../assest/logo.png'
 
 export default function Left() {
@@ -11,12 +12,12 @@ export default function Left() {
                 <h1 className='text-xl font-semibold text-slate-600'>BCANEPALHUB</h1>
 
             </div>
-           {semesterdat.map((data)=>(
-            <div className='w-[250px] justify-between flex font-semibold items-center gap-3 mt-5 cursor-pointer'>
+           {semesterdat.map((data,index)=>(
+            <Link to ={`/manage/${data}`} key={index} className='w-[250px] justify-between flex font-semibold items-center gap-3 mt-5 cursor-pointer'>
                 <Folder className=''/>
                 <h1>{data} semester Question </h1>
 
-            </div>
+            </Link>
            ))}
         </div>
     )
