@@ -3,12 +3,25 @@ from fastapi.responses import JSONResponse
 from logic import process_file_upload, retrieve_file_metadata_by_subject_semester
 # import database  # This triggers the DB connection
 # from bson import SON
+# from fastapi.staticfiles import StaticFiles
+# from fastapi.responses import HTMLResponse
+# import os
+# from pathlib import Path
 
 app = FastAPI(
     title="File Uploader Service",
     description="A simple FastAPI service for uploading and managing files using MongoDB GridFS.",
     version="1.0.1"
 )
+
+# @app.get("/", response_class=HTMLResponse)
+# async def serve_homepage():
+#     html_path = Path(__file__).resolve().parent.parent / "public" / "index.html"
+#     return html_path.read_text(encoding="utf-8")
+
+
+
+
 
 @app.post("/upload/", summary="Upload a file to GridFS")
 async def upload_file_endpoint(
