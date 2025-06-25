@@ -6,6 +6,7 @@ import gridfs
 # from bson.errors import InvalidId
 from fastapi import HTTPException
 from typing import Optional
+from bson import ObjectId
 
 load_dotenv()
 
@@ -29,7 +30,10 @@ async def save_file_to_gridfs(contents: bytes,
                               filename: Optional[str], 
                               content_type: Optional[str], 
                               subject: str, 
-                              semester: str):
+                              semester: str,
+                              questiontype:str
+                            
+                              ):
     """Save file with subject and semester metadata."""
     try:
         file_id = fs.put(
@@ -38,6 +42,7 @@ async def save_file_to_gridfs(contents: bytes,
             content_type=content_type,
             subject=subject,
             semester=semester,
+             questiontype=questiontype,
             chunk_size=1000024 * 1024
         )
         return file_id
@@ -45,20 +50,22 @@ async def save_file_to_gridfs(contents: bytes,
         raise HTTPException(status_code=500, detail=f"Failed to save file: {e}")
 
 
-def get_files_by_subject_semester(subject: str, semester: str):
+def get_files_by_subject_semester( semester: str,  questiontype:str):
     """Find all files with subject and semester metadata."""
     try:
         results = []
-        for file in fs.find({"subject": subject, "semester": semester}):
+        for file in fs.find({ "semester": semester, 'questiontype':questiontype}):
             results.append({
                 "file_id": str(file._id),
                 "filename": file.filename,
                 "content_type": file.content_type,
                 "subject": file.subject,
                 "semester": file.semester,
+                'questiontype':file.questiontype,
                 "length": file.length,
                 "upload_date": file.upload_date.isoformat()
             })
+
         if not results:
             raise HTTPException(status_code=404, detail="No files found.")
         return results
@@ -66,7 +73,17 @@ def get_files_by_subject_semester(subject: str, semester: str):
         raise HTTPException(status_code=500, detail=f"Error fetching files: {e}")
 
 
-
+def delete_file_from_gridfs(file_id: ObjectId) -> bool:
+    """
+    Deletes file from GridFS. Returns True if file existed and was deleted.
+    """
+    try:
+        if not fs.exists({"_id": file_id}):
+            return False
+        fs.delete(file_id)
+        return True
+    except Exception:
+        raise
 
 
 

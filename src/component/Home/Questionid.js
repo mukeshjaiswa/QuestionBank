@@ -9,11 +9,12 @@ import { semestersubject } from './Homepostdata'
 import Leatestpost from '../LatestPost/Leatespost';
 
 export default function Questionid() {
-  const { year } = useParams()
+  // const { semester } = useParams()
   const location = useLocation();
 
   const semester = location.state?.semester;
-  const fetchsemester = semestersubject.filter((item) => item.semester.toLowerCase() === semester.toLowerCase());
+
+  const fetchsemester = semestersubject.filter((item) => item.semester === semester.toLowerCase());
   const capitalizeFirstLetter = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
@@ -33,7 +34,7 @@ export default function Questionid() {
                 <div className='flex flex-col gap-3'>
                   {item.subject.map((subject, index) => (
 
-                    <Link to={`/subjectquestion/${subject}`} key={index} className='text-lg hover:underline hover:text-blue-500 font-semibold'>{subject} </Link>
+                    <Link to={`/${semester}/${subject}`} key={index} className='text-lg hover:underline hover:text-blue-500 font-semibold'>{subject} </Link>
                   ))}
 
 

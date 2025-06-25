@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '../config/firebase';
+
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const [username, setUserName] = useState('')
@@ -12,27 +12,37 @@ export default function Login() {
   const passhidehandler = () => {
     setPassHide(!passhide);
   }
+ 
+  
   const signinhandler = async () => {
-
-
-    const getadmindata = collection(db, 'admin');
-    const q = query(getadmindata, where('username', '==', username),
-      where('password', '==', password))
-    const matchdata = await getDocs(q);
-    if (!matchdata.empty) {
-      naviagete('/dashboard')
-      alert("Match login data")
+    const formData = new URLSearchParams();
+    formData.append('username', username);
+    formData.append('password', password);
+  
+    try {
+      const response = await fetch("http://localhost:8000/admin/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData.toString(),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        toast.success("Login successful!");
+        console.log(data);
+        naviagete('/dashboard'); // you can redirect here
+      } else {
+        alert("Login failed: " + data.detail);
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      toast.warn("Something went wrong. Check console.");
     }
-    else {
-      alert('not match')
-    }
-
-
-
-  }
-
-
-
+  };
+ 
 
   return (
     <div className='w-full h-[100vh] bg-gray-100 flex flex-col  items-center '>

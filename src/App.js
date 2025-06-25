@@ -29,10 +29,10 @@ function App() {
       <Route path='/syllabus' element={<Syllabus/>} />
       <Route path='/entrance' element={<Entrance/>} />
       <Route path='/entrancequestion/:year' element={<Entrancequestion/>} />
-      <Route path='/subjectquestion/:name' element={<SubjectquestionView/>} />
+      <Route path='/:semester/:subject' element={<SubjectquestionView/>} />
       <Route path='/MCQ' element={<MCQ/>} />
       <Route path='/MCQquestion/:semester' element={<MCQquestion/>} />
-      <Route path='/mcqview/:name' element={<MCQView/>} />
+      <Route path='/:semester/:name' element={<MCQView/>} />
       <Route path='/admin' element={<Login/>} />
       <Route path='/dashboard' element={<Dashboard/>} />
       <Route path='/manage/:id' element={<Manage/>} />

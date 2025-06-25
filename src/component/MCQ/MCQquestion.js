@@ -9,7 +9,7 @@ import { semestersubject } from '../Home/Homepostdata'
 import Leatestpost from '../LatestPost/Leatespost';
 
 export default function MCQquestion() {
-    const { year } = useParams()
+    // const { year } = useParams()
   const location = useLocation();
 
   const semester = location.state?.semester;
@@ -31,7 +31,7 @@ export default function MCQquestion() {
               <div className='flex flex-col gap-3'>
                 {item.subject.map((subject, index) => (
 
-                  <Link to={`/mcqview/${subject}`} key={index} className='text-lg hover:underline hover:text-blue-500 font-semibold'>{subject} </Link>
+                  <Link to={`/${semester}/${subject}`} key={index} className='text-lg hover:underline hover:text-blue-500 font-semibold'>{subject} </Link>
                 ))}
 
 

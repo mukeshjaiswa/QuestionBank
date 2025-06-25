@@ -25,18 +25,18 @@ export default function Home() {
         }
 
     }
-    const viewquestion = (index, semester) => {
-        naviage(`/question/${index}`, {
+    const viewquestion = ( semester) => {
+        naviage(`/question/${semester}`, {
             state: { semester }
         })
     }
-    const viewmcqquestion = (index, semester) => {
+    const viewmcqquestion = ( semester) => {
         naviage(`/mcqquestion/${semester}`, {
             state: { semester }
         })
     }
     const capitalizeFirstLetter = (str) => {
-        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        // return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
       };
 
     return (
@@ -48,7 +48,7 @@ export default function Home() {
                 <h1 className='text-3xl font-semibold'>Latest Question</h1>
                 <div className='grid sm:grid-cols-2 lg:grid-cols-3 mt-5 gap-3'>
                     {data.slice(0, postindex).map((item,index) => (
-                        <div key={index} className=' mt-5 bg-white border rounded-md cursor-pointer' onClick={()=>viewquestion(item.index,item.semester)}>
+                        <div key={index} className=' mt-5 bg-white border rounded-md cursor-pointer' onClick={()=>viewquestion(item.semester)}>
                             <div className='w-full'>
                                 <img src={item.image} alt="" className='rounded-t-md' />
                             </div>
@@ -71,7 +71,7 @@ export default function Home() {
                 <h1 className='text-3xl font-semibold'>Latest MCQ Question</h1>
                 <div className='grid sm:grid-cols-2  lg:grid-cols-3 mt-5 gap-3'>
                     {data.slice(0, postindex).map((item,index) => (
-                        <div key={index} className=' mt-5 border bg-white  rounded-md cursor-pointer' onClick={()=>viewmcqquestion(item.index,item.semester)}>
+                        <div key={index} className=' mt-5 border bg-white  rounded-md cursor-pointer' onClick={()=>viewmcqquestion(item.semester)}>
                             <div className='w-full'>
                                 <img src={item.image} alt="" className='rounded-t-md' />
                             </div>

@@ -4,20 +4,31 @@ from logic import process_file_upload, retrieve_file_metadata_by_subject_semeste
 # import database  # This triggers the DB connection
 # from bson import SON
 # from fastapi.staticfiles import StaticFiles
-# from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse
 # import os
-# from pathlib import Path
+from pathlib import Path
+from fastapi.middleware.cors import CORSMiddleware
+from logic import delete_file_by_id
+from admin_logic import verify_admin_credentials
 
 app = FastAPI(
     title="File Uploader Service",
     description="A simple FastAPI service for uploading and managing files using MongoDB GridFS.",
     version="1.0.1"
 )
+#Enable CORS for React frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Replace with frontend URL for production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# @app.get("/", response_class=HTMLResponse)
-# async def serve_homepage():
-#     html_path = Path(__file__).resolve().parent.parent / "public" / "index.html"
-#     return html_path.read_text(encoding="utf-8")
+@app.get("/", response_class=HTMLResponse)
+async def serve_homepage():
+    html_path = Path(__file__).resolve().parent.parent / "public" / "index.html"
+    return html_path.read_text(encoding="utf-8")
 
 
 
@@ -27,35 +38,48 @@ app = FastAPI(
 async def upload_file_endpoint(
     file: UploadFile = File(...),
     subject: str = Form(...),
-    semester: str = Form(...)
+    semester: str = Form(...),
+    questiontype: str = Form(...),
 ):
     """
     Uploads a file to GridFS with subject and semester metadata.
     """
-    file_id = await process_file_upload(file, subject, semester)
+    file_id = await process_file_upload(file, subject, semester, questiontype)
     return JSONResponse(
-        content={"message": "File uploaded successfully", "file_id": file_id,"subject":subject,"semester":semester},
+        content={"message": "File uploaded successfully", "file_id": file_id,"subject":subject,"semester":semester,'question':questiontype},
         status_code=201
-        
     )
 
 
 @app.get("/files", summary="Get files by subject and semester")
-def get_files_by_subject_semester(subject: str, semester: str):
+def get_files_by_subject_semester( semester: str, questiontype:str):
     """
     Retrieve metadata for files matching subject and semester.
     """
-    files = retrieve_file_metadata_by_subject_semester(subject, semester)
+    files = retrieve_file_metadata_by_subject_semester( semester, questiontype)
     return JSONResponse(content={"files": files}, status_code=200)
 
+@app.delete("/delete/{file_id}", summary="Delete a file by ID", status_code=200)
+def delete_file(file_id: str):
+    result = delete_file_by_id(file_id)
+    return JSONResponse(content=result)
 
 
 
-
+# {admin login endpoint}
+@app.post("/admin/login", summary="Admin login")
+def admin_login(username: str = Form(...), password: str = Form(...)):
+    """
+    Login endpoint for admin access.
+    """
+    if verify_admin_credentials(username, password):
+        return {"message": "Admin login successful"}
+    raise HTTPException(status_code=401, detail="Invalid credentials")
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    
 
 
 

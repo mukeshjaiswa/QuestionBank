@@ -41,18 +41,18 @@ export default function Footer() {
                             <Phone />
                             <span>9804327158</span>
                         </a>
-                        <a href="mailto:bcaoldquestiontu@gmail.com" className="flex items-center space-x-2 hover:text-blue-800">
+                        <a href="mailto:bcanepalhub@gmail.com" target='_blank' className="flex items-center space-x-2 hover:text-blue-800">
                             <Mail />
-                            <span>bcaoldquestiontu@gmail.com</span>
+                            <span>bcanepalhub@gmail.com</span>
                         </a>
                     </div>
                     <div className=''>
                         <h1 className='text-xl font-semibold mt-5'>social Media</h1>
                         <div className='flex items-start justify-start gap-3 mt-5'>
-                            <a href="https://www.facebook.com">
+                            <a href="https://www.facebook.com/profile.php?id=61577326064141" target='_blank'>
                                 <Facebook size={50} className='shadow-sm cursor-pointer bg-white hover:bg-blue-500 hover:text-white rounded-md p-1' />
                             </a>
-                            <a href="https://www.instagram.com">
+                            <a href="https://www.instagram.com" target='_blank'>
 
                                 <Instagram size={50} className='shadow-sm cursor-pointer bg-white hover:bg-red-500 hover:text-white rounded-md p-1' />
                             </a>
